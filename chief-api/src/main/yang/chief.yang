@@ -1,0 +1,75 @@
+module chief {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:chief";
+    prefix "chief";
+
+    revision "2016-03-23" {
+        description "Initial revision of CHIEF model";
+    }
+
+    identity chief-context {
+        description "Identity used to mark the operational context of a CHIEF node.";
+    }
+
+    container chief-config {
+        leaf broker-url {
+            type string;
+            default "tcp://localhost:61616";
+            description "The URL of the AMQP/ActiveMQ broker.";
+        }
+        leaf controller-id {
+            type string;
+            description "Unique identifier for this community network cloud controller.";
+        }
+    }
+
+    list tenant {
+        key "tenant-id";
+        leaf tenant-id {
+            type string;
+        }
+        leaf domain-name {
+            type string;
+        }
+        leaf throttle-rate {
+            type uint32;
+            units "bps";
+            description "Maximum allowed bandwidth for inter-cloud traffic for this tenant.";
+        }
+    }
+
+    notification inter-cloud-event {
+        description "Notification sent between federated clouds.";
+        leaf source-cloud-id {
+            type string;
+        }
+        leaf destination-cloud-id {
+            type string;
+        }
+        leaf tenant-id {
+            type string;
+            description "The tenant associated with this event.";
+        }
+        leaf payload {
+            type string;
+            description "Serialized event data or resource request.";
+        }
+    }
+
+    rpc request-resource {
+        description "RPC call to request resources from another cloud.";
+        input {
+            leaf target-cloud-id {
+                type string;
+            }
+            leaf resource-type {
+                type string;
+            }
+        }
+        output {
+            leaf status {
+                type string;
+            }
+        }
+    }
+}
