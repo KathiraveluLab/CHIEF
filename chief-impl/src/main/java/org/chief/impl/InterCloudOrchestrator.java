@@ -17,10 +17,15 @@ public class InterCloudOrchestrator {
 
     private final String controllerId;
     private final NotificationProviderService notificationService;
+    private ResourceAllocationService resourceAllocationService;
 
     public InterCloudOrchestrator(String controllerId, NotificationProviderService notificationService) {
         this.controllerId = controllerId;
         this.notificationService = notificationService;
+    }
+
+    public void setResourceAllocationService(ResourceAllocationService resourceAllocationService) {
+        this.resourceAllocationService = resourceAllocationService;
     }
 
     /**
@@ -65,9 +70,17 @@ public class InterCloudOrchestrator {
 
         LOG.info("Processing federated resource request: Type={}, Amount={}", type, amount);
         
-        // This would call ResourceAllocationService to check local availability
-        // and if successful, initiate actual provisioning.
-        initiateFederation(event.getTenantId(), type, amount);
+        boolean canAccommodate = false;
+        if (resourceAllocationService != null) {
+            canAccommodate = resourceAllocationService.handleFederatedRequest(event.getSourceCloudId(), type, amount);
+        }
+        
+        if (canAccommodate) {
+            initiateFederation(event.getTenantId(), type, amount);
+        } else {
+            LOG.warn("Cannot accommodate federated request for {} units of {} from {}", 
+                    amount, type, event.getSourceCloudId());
+        }
     }
 
     private void initiateFederation(String tenantId, String type, int amount) {

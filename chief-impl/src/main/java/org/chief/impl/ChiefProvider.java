@@ -29,6 +29,7 @@ public class ChiefProvider implements BindingAwareProvider, ChiefService, AutoCl
         notificationService = session.getSALService(NotificationProviderService.class);
         orchestrator = new InterCloudOrchestrator("chief-cloud-1", notificationService);
         resourceService = new ResourceAllocationService("chief-cloud-1", orchestrator);
+        orchestrator.setResourceAllocationService(resourceService);
 
         // Register for inter-cloud notifications (Simulated listener for research parity)
         session.addNotificationListener(InterCloudEvent.class, notification -> {
