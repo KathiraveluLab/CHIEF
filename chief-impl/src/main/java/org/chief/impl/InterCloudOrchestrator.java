@@ -60,7 +60,34 @@ public class InterCloudOrchestrator {
         // 1. Parse the event to check if it's a resource request
         if (event.getPayload().startsWith("ResourceRequest:")) {
             processResourceRequest(event);
+        } else if (event.getPayload().startsWith("ResourceProvisioned:")) {
+            processResourceProvisioned(event);
+        } else if (event.getPayload().startsWith("ResourceDenied:")) {
+            processResourceDenied(event);
         }
+    }
+
+    private void processResourceProvisioned(InterCloudEvent event) {
+        String[] parts = event.getPayload().split(":");
+        String type = parts[1].split("=")[0];
+        int amount = Integer.parseInt(parts[1].split("=")[1]);
+
+        LOG.info("Successfully provisioned {} units of {} from federated cloud {}", 
+                amount, type, event.getSourceCloudId());
+        
+        // Add federated capacity to the local pool
+        if (resourceAllocationService != null) {
+            resourceAllocationService.addResourceCapacity(type, amount);
+        }
+    }
+
+    private void processResourceDenied(InterCloudEvent event) {
+        String[] parts = event.getPayload().split(":");
+        String type = parts[1].split("=")[0];
+        int amount = Integer.parseInt(parts[1].split("=")[1]);
+
+        LOG.warn("Federated request for {} units of {} was denied by cloud {}", 
+                amount, type, event.getSourceCloudId());
     }
 
     private void processResourceRequest(InterCloudEvent event) {
@@ -76,17 +103,37 @@ public class InterCloudOrchestrator {
         }
         
         if (canAccommodate) {
-            initiateFederation(event.getTenantId(), type, amount);
+            initiateFederation(event.getSourceCloudId(), event.getTenantId(), type, amount);
         } else {
             LOG.warn("Cannot accommodate federated request for {} units of {} from {}", 
                     amount, type, event.getSourceCloudId());
+                    
+            String payload = "ResourceDenied:" + type + "=" + amount;
+            InterCloudEvent responseEvent = new InterCloudEventBuilder()
+                    .setSourceCloudId(controllerId)
+                    .setDestinationCloudId(event.getSourceCloudId())
+                    .setTenantId(event.getTenantId())
+                    .setPayload(payload)
+                    .build();
+            publishToBroker(responseEvent);
         }
     }
 
-    private void initiateFederation(String tenantId, String type, int amount) {
+    private void initiateFederation(String sourceCloudId, String tenantId, String type, int amount) {
         LOG.info("Initiating federation provisioning for tenant {}: {} units of {}", 
                 tenantId, amount, type);
+                
         // Provisioning logic as per Section III-B execution threads.
+        // Send the response back to the originating community network cloud.
+        String payload = "ResourceProvisioned:" + type + "=" + amount;
+        InterCloudEvent responseEvent = new InterCloudEventBuilder()
+                .setSourceCloudId(controllerId)
+                .setDestinationCloudId(sourceCloudId)
+                .setTenantId(tenantId)
+                .setPayload(payload)
+                .build();
+                
+        publishToBroker(responseEvent);
     }
 
     private void publishToBroker(InterCloudEvent event) {
