@@ -3,6 +3,10 @@ package org.chief.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Handles community network resource allocation logic as referenced in the CHIEF paper [33].
  * This service manages resource sharing decisions within and between federated clouds.
@@ -12,9 +16,21 @@ public class ResourceAllocationService {
     private static final Logger LOG = LoggerFactory.getLogger(ResourceAllocationService.class);
 
     private final String cloudId;
+    private final InterCloudOrchestrator orchestrator;
+    private final Map<String, Integer> availableResources = new ConcurrentHashMap<>();
 
-    public ResourceAllocationService(String cloudId) {
+    public ResourceAllocationService(String cloudId, InterCloudOrchestrator orchestrator) {
         this.cloudId = cloudId;
+        this.orchestrator = orchestrator;
+    }
+
+    /**
+     * Adds capacity to the local resource pool.
+     */
+    public void addResourceCapacity(String type, int amount) {
+        availableResources.merge(type, amount, Integer::sum);
+        LOG.info("Added {} units of {} to local capacity. Total: {}", 
+                 amount, type, availableResources.get(type));
     }
 
     /**
@@ -29,7 +45,10 @@ public class ResourceAllocationService {
         
         if (!success) {
             LOG.info("Local resources insufficient. Escalating to federated request.");
-            // In a real implementation, this would trigger InterCloudOrchestrator.routeEvent()
+            if (orchestrator != null) {
+                String payload = "ResourceRequest:" + requestType + "=" + amount;
+                orchestrator.routeEvent("federation-broker", tenantId, payload);
+            }
             return false;
         }
         
@@ -48,8 +67,15 @@ public class ResourceAllocationService {
     }
 
     private boolean localAllocation(String type, int amount) {
-        // Mock local resource check.
         LOG.debug("Verifying local {} availability for {} units", type, amount);
-        return true; 
+        AtomicBoolean success = new AtomicBoolean(false);
+        availableResources.compute(type, (k, current) -> {
+            if (current == null || current < amount) {
+                return current;
+            }
+            success.set(true);
+            return current - amount;
+        });
+        return success.get();
     }
 }

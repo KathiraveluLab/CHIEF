@@ -28,7 +28,7 @@ public class ChiefProvider implements BindingAwareProvider, ChiefService, AutoCl
         LOG.info("CHIEF Provider Session Initiated");
         notificationService = session.getSALService(NotificationProviderService.class);
         orchestrator = new InterCloudOrchestrator("chief-cloud-1", notificationService);
-        resourceService = new ResourceAllocationService("chief-cloud-1");
+        resourceService = new ResourceAllocationService("chief-cloud-1", orchestrator);
 
         // Register for inter-cloud notifications (Simulated listener for research parity)
         session.addNotificationListener(InterCloudEvent.class, notification -> {
@@ -46,7 +46,7 @@ public class ChiefProvider implements BindingAwareProvider, ChiefService, AutoCl
         LOG.info("Resource requested from cloud: " + input.getTargetCloudId());
         
         // Federation logic via InterCloudOrchestrator
-        orchestrator.routeEvent(input.getTargetCloudId(), "ResourceRequest:" + input.getResourceType());
+        orchestrator.routeEvent(input.getTargetCloudId(), "default-tenant", "ResourceRequest:" + input.getResourceType());
         
         RequestResourceOutput result = new RequestResourceOutputBuilder()
                 .setStatus("Request forwarded to " + input.getTargetCloudId())
