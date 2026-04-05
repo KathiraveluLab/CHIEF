@@ -2,10 +2,33 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.opendaylight.chief</groupId>
-    <artifactId>chief-aggregator</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>org.opendaylight.controller</groupId>
+    <artifactId>config-parent</artifactId>
+    <version>0.3.4-Lithium-SR4</version>
+    <relativePath/>
   </parent>
+
+  <repositories>
+    <repository>
+      <id>opendaylight-mirror</id>
+      <name>opendaylight-mirror</name>
+      <url>https://nexus.opendaylight.org/content/groups/public/</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <groupId>org.opendaylight.chief</groupId>
+  <version>1.0-SNAPSHOT</version>
+
+  <properties>
+    <mdsal.version>1.2.4-Lithium-SR4</mdsal.version>
+  </properties>
 
   <artifactId>chief-impl</artifactId>
   <packaging>bundle</packaging>
@@ -19,7 +42,7 @@
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>sal-binding-api</artifactId>
-      <version>1.2.0-SNAPSHOT</version>
+      <version>${mdsal.version}</version>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.messaging4transport</groupId>

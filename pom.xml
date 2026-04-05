@@ -5,7 +5,8 @@
   <parent>
     <groupId>org.opendaylight.odlparent</groupId>
     <artifactId>odlparent</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.4-Lithium-SR4</version>
+    <relativePath/>
   </parent>
 
   <groupId>org.opendaylight.chief</groupId>
@@ -21,6 +22,44 @@
     <module>chief-billing</module>
     <module>chief-features</module>
   </modules>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <mdsal.version>1.2.4-Lithium-SR4</mdsal.version>
+    <yangtools.version>0.7.4-Lithium-SR4</yangtools.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>opendaylight-mirror</id>
+      <name>opendaylight-mirror</name>
+      <url>https://nexus.opendaylight.org/content/groups/public/</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>opendaylight-mirror</id>
+      <name>opendaylight-mirror</name>
+      <url>https://nexus.opendaylight.org/content/groups/public/</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
 
   <build>
     <plugins>
