@@ -21,6 +21,28 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>opendaylight-snapshot</id>
+      <name>opendaylight-snapshot</name>
+      <url>https://nexus.opendaylight.org/content/repositories/opendaylight.snapshot/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>opendaylight-release</id>
+      <name>opendaylight-release</name>
+      <url>https://nexus.opendaylight.org/content/repositories/opendaylight.release/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
   </repositories>
 
   <groupId>org.opendaylight.chief</groupId>
