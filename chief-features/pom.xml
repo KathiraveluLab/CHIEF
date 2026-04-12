@@ -65,7 +65,7 @@
     <dependency>
       <groupId>org.opendaylight.messaging4transport</groupId>
       <artifactId>messaging4transport-features</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0.4-Beryllium-SR4</version>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
