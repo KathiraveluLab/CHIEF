@@ -2,7 +2,7 @@
 <features name="chief-1.0-SNAPSHOT" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
-    <repository>mvn:org.opendaylight.messaging4transport/messaging4transport-features/1.0.4-Beryllium-SR4/xml/features</repository>
+    <repository>mvn:org.opendaylight.messaging4transport/messaging4transport-features/1.0-SNAPSHOT/xml/features</repository>
     
     <feature name='odl-chief-all' version='1.0-SNAPSHOT' description='OpenDaylight :: CHIEF :: All'>
         <feature version='1.0-SNAPSHOT'>odl-chief</feature>
@@ -13,7 +13,7 @@
     <feature name='odl-chief' version='1.0-SNAPSHOT' description='OpenDaylight :: CHIEF'>
         <feature version='1.0-SNAPSHOT'>odl-chief-api</feature>
         <bundle>mvn:org.opendaylight.chief/chief-impl/1.0-SNAPSHOT</bundle>
-        <feature version='1.0.4-Beryllium-SR4'>odl-messaging4transport</feature>
+        <feature version='1.0-SNAPSHOT'>odl-messaging4transport</feature>
     </feature>
     
     <feature name='odl-chief-api' version='1.0-SNAPSHOT' description='OpenDaylight :: CHIEF :: API'>
@@ -22,6 +22,7 @@
 
     <feature name='odl-chief-monitoring' version='1.0-SNAPSHOT' description='OpenDaylight :: CHIEF :: Monitoring'>
         <feature version='1.0-SNAPSHOT'>odl-chief-api</feature>
+        <feature version='0.1.4-Lithium-SR4'>odl-openflowplugin-flow-services</feature>
         <bundle>mvn:org.opendaylight.chief/chief-monitoring/1.0-SNAPSHOT</bundle>
     </feature>
 

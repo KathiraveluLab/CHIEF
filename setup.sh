@@ -5,6 +5,7 @@
 # =============================================================================
 # Usage:
 #   ./setup.sh              # Full setup (infra + build + ODL)
+#   ./setup.sh --clean      # Full reset (stop infra + delete ODL + fresh setup)
 #   ./setup.sh --infra-only # Start Docker services only (skip build/ODL)
 #   ./setup.sh --build-only # Build CHIEF only (Docker + ODL must be running)
 #   ./setup.sh --stop       # Stop and remove all Docker containers
@@ -36,11 +37,12 @@ HADOOP_NAMENODE_PORT=9870
 # ── Argument parsing ────────────────────────────────────────────────────────────
 MODE="full"
 case "${1:-}" in
+  --clean)       MODE="clean"  ;;
   --infra-only)  MODE="infra"  ;;
   --build-only)  MODE="build"  ;;
   --stop)        MODE="stop"   ;;
   "")            MODE="full"   ;;
-  *) die "Unknown option '${1}'. Use --infra-only | --build-only | --stop" ;;
+  *) die "Unknown option '${1}'. Use --clean | --infra-only | --build-only | --stop" ;;
 esac
 
 # ── Helper: wait for a TCP port ─────────────────────────────────────────────────
@@ -345,6 +347,18 @@ echo -e "${BOLD}╚════════════════════�
 check_prerequisites
 
 case "${MODE}" in
+  clean)
+    info "Performing full cleanup before setup …"
+    cd "${SCRIPT_DIR}"
+    docker compose down 2>/dev/null || true
+    rm -rf "${ODL_DIR}"
+    rm -f "${ODL_TARBALL}"
+    success "Cleanup complete. Starting fresh setup …"
+    start_infra
+    build_chief
+    setup_odl
+    print_next_steps
+    ;;
   full)
     start_infra
     build_chief

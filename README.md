@@ -46,6 +46,7 @@ A single script handles everything — prerequisites check, Docker infrastructur
 | `./setup.sh --infra-only` | Start Docker services only |
 | `./setup.sh --build-only` | Build CHIEF only |
 | `./setup.sh --stop` | Stop and remove all containers |
+| `./setup.sh --clean` | Full reset (stops services, wipes cache, and rebuilds) |
 
 After the script finishes, start OpenDaylight and install the CHIEF features:
 

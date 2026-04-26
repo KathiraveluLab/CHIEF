@@ -67,6 +67,82 @@
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-client</artifactId>
       <version>3.2.1</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+            <Import-Package>
+              !org.apache.hadoop.*,
+              !com.google.protobuf.*,
+              !org.apache.avro.*,
+              !org.apache.hadoop.shaded.*,
+              !com.fasterxml.jackson.*,
+              !com.jcraft.jsch.*,
+              !com.nimbusds.*,
+              !net.minidev.json.*,
+              !com.squareup.okhttp.*,
+              !okio.*,
+              !org.xbill.DNS.*,
+              !org.apache.curator.*,
+              !org.apache.zookeeper.*,
+              !org.codehaus.jackson.*,
+              !org.apache.commons.configuration2.*,
+              !org.apache.commons.lang3.*,
+              !org.eclipse.jetty.*,
+              !net.jcip.annotations.*,
+              !javax.annotation.*,
+              org.slf4j.*;resolution:=optional,
+              org.opendaylight.*;resolution:=optional,
+              org.osgi.framework;resolution:=optional,
+              *;resolution:=optional
+            </Import-Package>
+            <Embed-Dependency>
+              hadoop-client,
+              hadoop-common,
+              hadoop-hdfs-client,
+              hadoop-auth,
+              commons-collections,
+              commons-cli,
+              commons-lang3,
+              commons-configuration2,
+              commons-beanutils,
+              commons-io,
+              commons-codec,
+              htrace-core4,
+              woodstox-core,
+              stax2-api,
+              re2j,
+              jackson-annotations,
+              jackson-core,
+              jackson-databind,
+              jackson-mapper-asl,
+              jackson-core-asl,
+              jsch,
+              nimbus-jose-jwt,
+              json-smart,
+              okhttp,
+              okio,
+              zookeeper,
+              curator-framework,
+              curator-client,
+              curator-recipes,
+              guava;inline=true
+            </Embed-Dependency>
+            <Embed-Transitive>true</Embed-Transitive>
+            <DynamicImport-Package>*</DynamicImport-Package>
+            <_exportcontents>org.chief.billing.*</_exportcontents>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

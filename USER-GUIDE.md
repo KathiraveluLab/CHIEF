@@ -13,6 +13,7 @@ The `./setup.sh` script automatically:
 1.  Detects if Java 8 is installed.
 2.  Installs `openjdk-8-jdk` if missing.
 3.  Generates an `env.sh` file to manage your paths.
+4.  **Full Reset Option**: Use `./setup.sh --clean` to wipe the ODL cache/directory and start fresh.
 
 ### Synchronizing your Shell
 Every time you open a new terminal to work with CHIEF, you **must** source the environment:
@@ -50,7 +51,40 @@ This ensures `JAVA_HOME` points to Java 8 and `PATH` includes the correct Java b
 
 ---
 
-## 3. Infrastructure (Docker)
+## 3. Verifying the Installation
+
+Once the installation is complete, use the following Karaf commands to ensure everything is running correctly.
+
+### Check Bundle Status
+List and filter for CHIEF bundles:
+```karaf
+bundle:list | grep chief
+```
+*   **Active**: Success! The bundle and its services are running.
+*   **Resolved**: Bundle is loaded but not started (normal for some API modules).
+*   **Installed**: Resolution error. Use `bundle:diag` to see what's missing.
+
+### Check Feature Status
+Confirm the CHIEF features are correctly marked as `[installed]`:
+```karaf
+feature:list -i | grep chief
+```
+
+### Troubleshoot Missing Dependencies
+If a bundle is stuck in `Installed` state, diagnose it:
+```karaf
+bundle:diag <BUNDLE_ID>
+```
+
+### Monitor Logs
+Watch the live CHIEF engine output:
+```karaf
+log:tail
+```
+
+---
+
+## 4. Infrastructure (Docker)
 
 CHIEF relies on a distributed infrastructure provided via Docker Compose:
 - **ActiveMQ (AMQP 1.0)**: Used for inter-cloud event forwarding via Messaging4Transport.
@@ -64,7 +98,7 @@ CHIEF relies on a distributed infrastructure provided via Docker Compose:
 
 ---
 
-## 4. Troubleshooting Guide
+## 5. Troubleshooting Guide
 
 ### Issue: `Unrecognized VM option 'UnsyncloadClass'`
 - **Cause**: You are running Karaf with a Java version newer than 8.
@@ -74,11 +108,15 @@ CHIEF relies on a distributed infrastructure provided via Docker Compose:
 - **Cause**: Karaf's Maven resolver is looking at its internal `system/` directory instead of your local `~/.m2/repository`.
 - **Fix**: The `setup.sh` script automatically patches `etc/org.ops4j.pax.url.mvn.cfg`. If you still face this, ensure `org.ops4j.pax.url.mvn.localRepository` in that file points to `${user.home}/.m2/repository`.
 
-### Issue: `Bundle has already been installed`
-- **Cause**: A conflict in the OSGi runtime from a previous `feature:install` attempt.
-- **Fix**: Perform a clean restart of Karaf:
+### Issue: `Bundle has already been installed` or `Missing Constraint`
+- **Cause**: A conflict in the OSGi runtime from a previous `feature:install` attempt or mismatched versions.
+- **Fix**: Perform a clean restart or reset the entire environment:
   ```bash
+  # Option A: Clean the OSGi cache and restart
   ./distribution-karaf-0.3.4-Lithium-SR4/bin/karaf clean
+
+  # Option B: Total reset (recommended if the error persists)
+  ./setup.sh --clean
   ```
   Then re-add the repo and install the feature.
 
@@ -96,7 +134,7 @@ CHIEF relies on a distributed infrastructure provided via Docker Compose:
 
 ---
 
-## 5. Module Reference
+## 6. Module Reference
 
 - **chief-api**: YANG models and API definitions.
 - **chief-impl**: Core Inter-Cloud Orchestrator logic.
