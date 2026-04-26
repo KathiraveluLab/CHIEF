@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="chief-1.0-SNAPSHOT" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
+    <repository>mvn:org.opendaylight.messaging4transport/messaging4transport-features/1.0.4-Beryllium-SR4/xml/features</repository>
+    
+    <feature name='odl-chief-all' version='1.0-SNAPSHOT' description='OpenDaylight :: CHIEF :: All'>
+        <feature version='1.0-SNAPSHOT'>odl-chief</feature>
+        <feature version='1.0-SNAPSHOT'>odl-chief-monitoring</feature>
+        <feature version='1.0-SNAPSHOT'>odl-chief-billing</feature>
+    </feature>
+
+    <feature name='odl-chief' version='1.0-SNAPSHOT' description='OpenDaylight :: CHIEF'>
+        <feature version='1.0-SNAPSHOT'>odl-chief-api</feature>
+        <bundle>mvn:org.opendaylight.chief/chief-impl/1.0-SNAPSHOT</bundle>
+        <feature version='1.0.4-Beryllium-SR4'>odl-messaging4transport</feature>
+    </feature>
+    
+    <feature name='odl-chief-api' version='1.0-SNAPSHOT' description='OpenDaylight :: CHIEF :: API'>
+        <bundle>mvn:org.opendaylight.chief/chief-api/1.0-SNAPSHOT</bundle>
+    </feature>
+
+    <feature name='odl-chief-monitoring' version='1.0-SNAPSHOT' description='OpenDaylight :: CHIEF :: Monitoring'>
+        <feature version='1.0-SNAPSHOT'>odl-chief-api</feature>
+        <bundle>mvn:org.opendaylight.chief/chief-monitoring/1.0-SNAPSHOT</bundle>
+    </feature>
+
+    <feature name='odl-chief-billing' version='1.0-SNAPSHOT' description='OpenDaylight :: CHIEF :: Billing'>
+        <feature version='1.0-SNAPSHOT'>odl-chief-api</feature>
+        <bundle>mvn:org.opendaylight.chief/chief-billing/1.0-SNAPSHOT</bundle>
+    </feature>
+</features>

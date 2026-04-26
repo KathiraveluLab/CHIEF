@@ -3,6 +3,7 @@ package org.chief.impl;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.chief.rev160323.ChiefListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.chief.rev160323.ChiefService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.chief.rev160323.InterCloudEvent;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.chief.rev160323.RequestResourceInput;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Future;
 
-public class ChiefProvider implements BindingAwareProvider, ChiefService, AutoCloseable {
+public class ChiefProvider implements BindingAwareProvider, ChiefService, ChiefListener, AutoCloseable {
 
     private static final Logger LOG = LoggerFactory.getLogger(ChiefProvider.class);
 
@@ -31,10 +32,13 @@ public class ChiefProvider implements BindingAwareProvider, ChiefService, AutoCl
         resourceService = new ResourceAllocationService("chief-cloud-1", orchestrator);
         orchestrator.setResourceAllocationService(resourceService);
 
-        // Register for inter-cloud notifications (Simulated listener for research parity)
-        session.addNotificationListener(InterCloudEvent.class, notification -> {
-            orchestrator.handleRemoteEvent(notification);
-        });
+        // Register for inter-cloud notifications
+        notificationService.registerNotificationListener(this);
+    }
+
+    @Override
+    public void onInterCloudEvent(InterCloudEvent notification) {
+        orchestrator.handleRemoteEvent(notification);
     }
 
     @Override

@@ -50,6 +50,9 @@
 
   <properties>
     <mdsal.version>1.2.4-Lithium-SR4</mdsal.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.javadoc.skip>true</maven.javadoc.skip>
   </properties>
 
   <artifactId>chief-monitoring</artifactId>

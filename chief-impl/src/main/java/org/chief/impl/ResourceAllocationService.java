@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Handles community network resource allocation logic as referenced in the CHIEF paper [33].
@@ -17,7 +16,7 @@ public class ResourceAllocationService {
 
     private final String cloudId;
     private final InterCloudOrchestrator orchestrator;
-    private final Map<String, Integer> availableResources = new ConcurrentHashMap<>();
+    private final Map<String, Integer> availableResources = new ConcurrentHashMap<String, Integer>();
 
     public ResourceAllocationService(String cloudId, InterCloudOrchestrator orchestrator) {
         this.cloudId = cloudId;
@@ -28,9 +27,13 @@ public class ResourceAllocationService {
      * Adds capacity to the local resource pool.
      */
     public void addResourceCapacity(String type, int amount) {
-        availableResources.merge(type, amount, Integer::sum);
-        LOG.info("Added {} units of {} to local capacity. Total: {}", 
-                 amount, type, availableResources.get(type));
+        synchronized (availableResources) {
+            Integer current = availableResources.get(type);
+            int newVal = (current == null) ? amount : current + amount;
+            availableResources.put(type, newVal);
+            LOG.info("Added {} units of {} to local capacity. Total: {}", 
+                     amount, type, newVal);
+        }
     }
 
     /**
@@ -68,14 +71,13 @@ public class ResourceAllocationService {
 
     private boolean localAllocation(String type, int amount) {
         LOG.debug("Verifying local {} availability for {} units", type, amount);
-        AtomicBoolean success = new AtomicBoolean(false);
-        availableResources.compute(type, (k, current) -> {
+        synchronized (availableResources) {
+            Integer current = availableResources.get(type);
             if (current == null || current < amount) {
-                return current;
+                return false;
             }
-            success.set(true);
-            return current - amount;
-        });
-        return success.get();
+            availableResources.put(type, current - amount);
+            return true;
+        }
     }
 }

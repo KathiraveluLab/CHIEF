@@ -51,6 +51,12 @@
   <artifactId>chief-api</artifactId>
   <packaging>bundle</packaging>
 
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.javadoc.skip>true</maven.javadoc.skip>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.opendaylight.yangtools</groupId>

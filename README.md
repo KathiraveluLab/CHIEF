@@ -29,54 +29,60 @@ CHIEF leverages [Messaging4Transport](https://github.com/KathiraveluLab/Messagin
 - **Apache ActiveMQ (for AMQP 1.0 broker)**
 - **Hadoop/HDFS (for Billing service parallel processing)**
 
-## Build and Install
+## Quick Setup
+
+For detailed setup instructions and troubleshooting, see the [**User Guide**](USER-GUIDE.md).
+
+A single script handles everything — prerequisites check, Docker infrastructure (Hadoop + ActiveMQ), Maven build, and OpenDaylight download/configuration.
 
 ```bash
-# Clone and build CHIEF
-mvn clean install -DskipTests
+# Full setup
+./setup.sh
 ```
 
-## Running the Framework
+| Option | Description |
+|---|---|
+| `./setup.sh` | Full setup (infra + build + ODL) |
+| `./setup.sh --infra-only` | Start Docker services only |
+| `./setup.sh --build-only` | Build CHIEF only |
+| `./setup.sh --stop` | Stop and remove all containers |
 
-### 1. Start the Hadoop Cluster (Docker)
-CHIEF uses Hadoop for offline billing analysis. You can start a local Hadoop cluster using Docker:
+After the script finishes, start OpenDaylight and install the CHIEF features:
+
 ```bash
-# Start the Hadoop stack
-docker-compose up -d
-```
-The NameNode Web UI will be available at `http://localhost:9870`.
+# Source environment (Java 8)
+source ./env.sh
 
-### 2. Start the AMQP Broker (ActiveMQ)
-```bash
-# Start ActiveMQ
-$ACTIVEMQ_HOME/bin/activemq start
+# Start Karaf
+./distribution-karaf-0.3.4-Lithium-SR4/bin/karaf
 ```
 
-### 2. Start OpenDaylight
-```bash
-# Run Karaf
-./bin/karaf
-```
-
-### 3. Install Features
-In the Karaf console, install the CHIEF features:
 ```karaf
+# Inside the Karaf console
 feature:repo-add mvn:org.opendaylight.chief/chief-features/1.0-SNAPSHOT/xml/features
 feature:install odl-chief-all
 ```
 
-## Configuration
+## Service Endpoints
 
-### Messaging4Transport Configuration
-Configure the AMQP broker URL in `etc/org.opendaylight.messaging4transport.cfg`:
+| Service | URL | Credentials |
+|---|---|---|
+| ActiveMQ Broker | `tcp://localhost:61616` | — |
+| ActiveMQ Web Console | http://localhost:8161 | admin / admin |
+| Hadoop NameNode UI | http://localhost:9870 | — |
+| Hadoop HDFS | `hdfs://localhost:9000` | — |
+
+## Configuration Reference
+
+### Messaging4Transport
+Generated automatically by `setup.sh` at `<karaf>/etc/org.opendaylight.messaging4transport.cfg`:
 ```properties
 brokerUrl=tcp://localhost:61616
 username=admin
 password=admin
 ```
 
-### CHIEF Orchestration Configuration
-The `controller-id` and `tenant` settings are managed via MD-SAL configuration:
+### CHIEF Orchestration (MD-SAL)
 ```xml
 <chief-config xmlns="urn:opendaylight:params:xml:ns:yang:chief">
     <controller-id>chief-node-1</controller-id>
@@ -84,8 +90,7 @@ The `controller-id` and `tenant` settings are managed via MD-SAL configuration:
 </chief-config>
 ```
 
-### Hadoop HDFS Configuration
-The Billing service connects to HDFS for offline data analysis. Ensure the HDFS endpoint is reachable:
+### Hadoop HDFS
 ```properties
 hdfs.url=hdfs://localhost:9000
 ```

@@ -30,3 +30,11 @@ _bmad
 paper.txt
 .vscode/
 target/
+bin/
+chief-api/src/main/yang-gen-sal/
+chief-api/src/main/yang-gen-config/
+effective-pom.xml
+distribution-karaf-*/
+*.tar.gz
+env.sh
+messaging4transport/
