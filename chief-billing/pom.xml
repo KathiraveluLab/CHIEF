@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.opendaylight.yangtools</groupId>
+    <groupId>org.opendaylight.mdsal</groupId>
     <artifactId>binding-parent</artifactId>
-    <version>0.7.4-Lithium-SR4</version>
+    <version>0.8.4-Beryllium-SR4</version>
     <relativePath/>
   </parent>
 
@@ -66,7 +66,7 @@
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-client</artifactId>
-      <version>3.5.0</version>
+      <version>3.2.1</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
